@@ -14,10 +14,9 @@ PROGS := $(PROG_SRC:.c=.bin)
 # These common object files are linked into every program
 # so we track them using a variable
 DRIVER_SRC := $(wildcard drivers/*.c)
-OBJS += $(DRIVER_SRC:.c=.o)
 
 OBJS := start.o utils.o interrupts.o hardware.o
-OBJS += $(./drivers/*:.c=.o)
+OBJS += $(DRIVER_SRC:.c=.o)
 
 # The linker script decides where code/data go in memory.
 MEMMAP := ./memmap

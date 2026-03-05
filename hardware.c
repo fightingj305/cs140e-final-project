@@ -9,3 +9,14 @@ UART uart = {
     .num_bits = UART_8_BIT,
     .baud_rate = 115200
 };
+
+const Pin sda = {2};
+const Pin scl = {3};
+
+I2C i2c = {
+    .bsc = BSC1,
+    .sda = sda,
+    .scl = scl,
+    .slave_addr = 0x0F,
+    .speed_hz = 400000
+};

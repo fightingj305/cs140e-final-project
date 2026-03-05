@@ -1,0 +1,16 @@
+#include "ads1115.h"
+#include "i2c.h"
+#include "utils.h"
+
+uint16_t ADS1115_Read_Reg(ADS1115 *ads, ADS_Reg reg) {
+    if (ads->last_register != reg) {
+        I2C_Send_Data(ads->i2c, 1, reg);
+    }
+    uint8_t data[2];
+    I2C_Receive_Data(ads->i2c, 2, data);
+    return (uint16_t) data[0] << 8 | data[1];
+}
+
+void ADS1115_Write_Reg(ADS1115 *ads, ADS_Reg reg, uint16_t value) {
+
+}

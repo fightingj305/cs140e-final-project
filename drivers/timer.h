@@ -6,7 +6,7 @@
 #define TIM_BASE 0x2000B000
 #define IRQ_EN_BIT 5
 #define EN_BIT 7
-#define TIM_CLOCK_RATE 250000000
+#define CORE_CLOCK_RATE 250000000
 
 enum {
     TIM_LOAD = TIM_BASE + 0x400,

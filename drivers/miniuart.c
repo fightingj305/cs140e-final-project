@@ -17,7 +17,7 @@ void UART_Config(UART *uart) {
     
     GPIO_Config(&uart->tx_pin, AF5);
     GPIO_Config(&uart->rx_pin, AF5);
-    const uint32_t reg_value = (TIM_CLOCK_RATE / (8 * uart->baud_rate)) - 1;
+    const uint32_t reg_value = (CORE_CLOCK_RATE / (8 * uart->baud_rate)) - 1;
     
     // PUT32(AUX_MU_CNTL_REG, 0);  // doing this is pointless
     PUT32(AUX_MU_IER_REG, 0); // not necessary but i'll humor them
@@ -38,6 +38,39 @@ void UART_Send_Byte(const uint8_t byte) {
 void UART_Send_String(char *str) {
     for (char *c = str; *c != '\0'; c++) {
         UART_Send_Byte(*c);
+    }
+}
+
+void UART_Send_Int(uint32_t num) {
+    if (num == 0) {
+        UART_Send_Byte('0');
+    }
+    char output[11] = "\0\0\0\0\0\0\0\0\0\0";
+    uint8_t i = 0;
+    while (num > 0 && i < sizeof(output)) {
+        output[i] = '0' + num % 10;
+        num = num / 10;
+        i++;
+    }
+    
+    for (char *c = output + i - 1; c >= output; c--) {
+        if (*c) {
+            UART_Send_Byte(*c);
+        }
+    }
+}
+
+
+void UART_Send_Hex(uint32_t num) {
+    UART_Send_String("0x");
+    for (int8_t i = 28; i >= 0; i-= 4) {
+        uint8_t number = num >> i & 0xF;
+        if (number < 10) {
+            UART_Send_Byte('0' + number);
+        }
+        else {
+            UART_Send_Byte('A' + number - 10);
+        }
     }
 }
 
