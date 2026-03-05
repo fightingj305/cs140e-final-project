@@ -3,10 +3,10 @@
 #include "utils.h"
 
 void I2C_Enable(I2C *i2c) {
-    PUT32(i2c->bsc + I2C_C, GET32(i2c->bsc + I2C_C) | (1 << I2C_ENABLE_BIT));
+    RMW_OR(i2c->bsc + I2C_C, (1 << I2C_ENABLE_BIT));
 }
 void I2C_Disable(I2C *i2c) {
-    PUT32(i2c->bsc + I2C_C, GET32(i2c->bsc + I2C_C) & ~(1 << I2C_ENABLE_BIT));
+    RMW_AND(i2c->bsc + I2C_C, ~(1 << I2C_ENABLE_BIT));
 }
 void I2C_Init(I2C *i2c) {
     ASSERT(i2c->slave_addr == (i2c->slave_addr & 0x7F));
@@ -45,7 +45,7 @@ void I2C_Init(I2C *i2c) {
 }
 
 void I2C_Start_Transaction(I2C *i2c) {
-    PUT32(i2c->bsc + I2C_C, GET32(i2c->bsc + I2C_C) | (1 << I2C_ST_BIT));
+    RMW_OR(i2c->bsc + I2C_C, (1 << I2C_ST_BIT));
 }
 
 bool I2C_Transaction_Done(I2C *i2c) {
@@ -64,8 +64,8 @@ void I2C_Clear_Flags(I2C *i2c) {
 }
 
 void I2C_Clear_FIFO(I2C *i2c) {
-    PUT32(i2c->bsc + I2C_C, GET32(i2c->bsc + I2C_C) | (1 << I2C_CLEAR_BIT));
-    PUT32(i2c->bsc + I2C_C, GET32(i2c->bsc + I2C_C) & ~(1 << I2C_CLEAR_BIT));
+    RMW_OR(i2c->bsc + I2C_C, (1 << I2C_CLEAR_BIT));
+    RMW_AND(i2c->bsc + I2C_C, ~(1 << I2C_CLEAR_BIT));
 }
 
 bool I2C_TX_FIFO_Full(I2C *i2c) {
@@ -100,7 +100,7 @@ void I2C_Send_Data(I2C *i2c, uint32_t num_bytes, uint8_t *data) {
     ASSERT((num_bytes & 0xFFFF) == num_bytes);
 
     I2C_Clear_Flags(i2c);
-    PUT32(i2c->bsc + I2C_C, GET32(i2c->bsc + I2C_C) & ~(1 << I2C_READ_BIT));
+    RMW_AND(i2c->bsc + I2C_C, ~(1 << I2C_READ_BIT));
     PUT32(i2c->bsc + I2C_DLEN, num_bytes & 0xFFFF);
 
     I2C_Clear_FIFO(i2c);
@@ -126,7 +126,7 @@ void I2C_Receive_Data(I2C *i2c, uint32_t num_bytes, uint8_t *data) {
     ASSERT((num_bytes & 0xFFFF) == num_bytes);
 
     I2C_Clear_Flags(i2c);
-    PUT32(i2c->bsc + I2C_C, GET32(i2c->bsc + I2C_C) | (1 << I2C_READ_BIT));
+    RMW_OR(i2c->bsc + I2C_C, (1 << I2C_READ_BIT));
     PUT32(i2c->bsc + I2C_DLEN, num_bytes & 0xFFFF);
 
     I2C_Clear_FIFO(i2c);

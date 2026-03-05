@@ -43,6 +43,8 @@ void UART_Disable();
 void UART_Config(UART *uart);
 void UART_Send_Byte(const uint8_t byte);
 void UART_Send_String(char *str);
+void UART_Send_Int(uint32_t num);
+void UART_Send_Hex(uint32_t num);
 uint8_t UART_Receive_Byte();
 void UART_Flush_TX();
 bool UART_TX_Empty();

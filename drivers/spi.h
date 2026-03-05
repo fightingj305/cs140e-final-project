@@ -97,7 +97,6 @@ typedef struct SPI_t {
     Pin sclk;
     Pin cs0;
     Pin cs1;
-
 } SPI;
 
 
@@ -106,6 +105,6 @@ void SPI_Clear_FIFOs(void);
 bool SPI_TX_Full(void);
 bool SPI_RX_Empty(void);
 bool SPI_Transfer_Done(void);
-uint8_t SPI_Transaction(SPI_Device spi_device, uint8_t byte); // spi is full duplex so we have to use this goofy ahh interface
+uint8_t SPI_Transaction(SPI_Device spi_device, uint8_t byte); // spi is full duplex so we have to use this interface
 void SPI_Transaction_Multi(SPI_Device spi_device, uint32_t num_bytes, uint8_t *writes, uint8_t *data);
 void SPI_Send_Multi(SPI_Device spi_device, uint32_t num_bytes, uint8_t *data); // ignores read values

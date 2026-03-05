@@ -21,3 +21,11 @@ void put32(volatile uint32_t *addr, uint32_t value) {
 volatile uint32_t get32(volatile uint32_t *addr) {
     return GET32((uint32_t) addr);
 }
+
+void RMW_OR(uint32_t reg, uint32_t mask) {
+    PUT32(reg, GET32(reg) | mask);
+}
+
+void RMW_AND(uint32_t reg, uint32_t mask) {
+    PUT32(reg, GET32(reg) & mask);
+}

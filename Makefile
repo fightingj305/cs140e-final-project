@@ -44,7 +44,7 @@ all: $(PROGS)
 
 # 6) The rule for building a .bin.  We incidentally also
 # produce a .elf and .list (disassembled elf).
-%.bin: %.o $(OBJS) $(MEMMAP) Makefile *.h *.c
+%.bin: %.o $(OBJS) $(MEMMAP) Makefile *.h *.c drivers/*.h drivers/*.c
 	$(CC) $(CFLAGS) $(OBJS) $< -T $(MEMMAP) -lgcc -o $*.elf
 	$(ARM)-objcopy $*.elf -O binary $@
 	$(ARM)-objdump -D $*.elf > $*.list

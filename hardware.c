@@ -20,3 +20,7 @@ I2C i2c = {
     .slave_addr = 0x0F,
     .speed_hz = 400000
 };
+
+ADS1115 ads = {
+    .i2c = &i2c,
+};
