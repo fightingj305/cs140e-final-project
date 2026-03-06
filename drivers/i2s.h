@@ -3,6 +3,42 @@
 
 #include "gpio.h"
 
+#define CM_BASE        (0x20101000)
+
+#define CM_PCMCTL      (CM_BASE + 0x98)
+#define CM_PCMDIV      (CM_BASE + 0x9C)
+#define CM_PASSWD  (0x5A << 24)
+
+typedef enum {
+    CM_SRC_GND  = 0,
+    CM_SRC_OSC  = 1,
+    CM_SRC_TESTDEBUG0 = 2,
+    CM_SRC_TESTDEBUG1 = 3,
+    CM_SRC_PLLA = 4,
+    CM_SRC_PLLC = 5,
+    CM_SRC_PLLD = 6,
+    CM_SRC_HDMI = 7
+} CM_ClockSource;
+
+typedef enum {
+    CM_CTL_ENAB = (1 << 4),
+    CM_CTL_KILL = (1 << 5),
+    CM_CTL_GATE = (1 << 6),
+    CM_CTL_BUSY = (1 << 7),
+
+    CM_CTL_FLIP = (1 << 8),
+
+    CM_CTL_MASH_0 = (0 << 9),
+    CM_CTL_MASH_1 = (1 << 9),
+    CM_CTL_MASH_2 = (2 << 9),
+    CM_CTL_MASH_3 = (3 << 9)
+} CM_ControlBits;
+
+typedef enum {
+    CM_DIV_DIVF_SHIFT = 0,
+    CM_DIV_DIVI_SHIFT = 12
+} CM_DividerShift;
+
 #define PCM_BASE 0x20203000
 
 enum {
@@ -118,11 +154,15 @@ typedef struct I2S_t {
     Pin dout;
 } I2S;
 
+void PCM_Clock_Setup();
 void I2S_Init(I2S *i2s);
 void I2S_Wait_2();
 void I2S_Clear_FIFO();
-void I2S_Enable();
+void I2S_Clear_Flags();
+void I2S_Enable_Comms();
+void I2S_Disable_Comms();
 void I2S_Disable();
 bool I2S_TX_Full();
 bool I2S_RX_Ready();
-void I2S_Send_Value(uint32_t frame); // sends a left frame with empty right frame
+void I2S_Send_Value(uint32_t frame); // sends a left word with empty right word
+uint32_t I2S_Read_Value(); // will read a whole frame and only give left word

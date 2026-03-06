@@ -21,6 +21,23 @@ I2C i2c = {
     .speed_hz = 400000
 };
 
+
+const Pin bclk = {18};
+const Pin fs = {19};
+const Pin din = {20};
+const Pin dout = {21};
+
+I2S i2s = {
+    .frame_size = 32,
+    .rx_data_size = 24,
+    .tx_data_size = 24,
+    .bclk = bclk,
+    .fs = fs,
+    .din = din,
+    .dout = dout
+};
+
+
 ADS1115 ads = {
     .i2c = &i2c,
 };

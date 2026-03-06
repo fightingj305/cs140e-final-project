@@ -5,9 +5,11 @@
 void I2C_Enable(I2C *i2c) {
     RMW_OR(i2c->bsc + I2C_C, (1 << I2C_ENABLE_BIT));
 }
+
 void I2C_Disable(I2C *i2c) {
     RMW_AND(i2c->bsc + I2C_C, ~(1 << I2C_ENABLE_BIT));
 }
+
 void I2C_Init(I2C *i2c) {
     ASSERT(i2c->slave_addr == (i2c->slave_addr & 0x7F));
 
