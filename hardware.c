@@ -41,3 +41,10 @@ I2S i2s = {
 ADS1115 ads = {
     .i2c = &i2c,
 };
+
+GPCLK pcm1808_sck = {
+    .clk_periph = GPCLK0,
+    .source = GPCLK_SRC_PLLD,
+    // .speed = 3072000 * 8 // 24.576 MHz = 512 * fs
+    .speed = 3125000 * 8
+};

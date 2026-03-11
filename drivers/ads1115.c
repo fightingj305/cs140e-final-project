@@ -35,6 +35,6 @@ void ADS1115_Write_Reg(ADS1115 *ads, ADS_Reg reg, uint16_t value) {
 
 uint16_t ADS1115_Read_Channel(ADS1115 *ads, ADS_Channel channel) {
     ADS1115_Write_Reg(ads, ADS_CONFIG, ADS_CONFIG_OS | channel | ADS_DEFAULT_CONFIG);
-    while (!(ADS1115_Read_Reg(ads, ADS_CONFIG) & ADS_CONFIG_OS)); // we could do this better with a gpio poll on the alert pin? i lowk can't be bothered tho
+    while (!(ADS1115_Read_Reg(ads, ADS_CONFIG) & ADS_CONFIG_OS)); // we could do this better with a gpio poll on the alert pin? i lowk can't be bothered tho, enjoy the i2c flood
     return ADS1115_Read_Reg(ads, ADS_CONVERSION);
 }

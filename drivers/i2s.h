@@ -1,43 +1,9 @@
 #pragma once
 // mono i2s master driver for this project; we don't have to worry about stereo thank god
-
 #include "gpio.h"
+#include "gpclk.h"
 
-#define CM_BASE        (0x20101000)
-
-#define CM_PCMCTL      (CM_BASE + 0x98)
-#define CM_PCMDIV      (CM_BASE + 0x9C)
-#define CM_PASSWD  (0x5A << 24)
-
-typedef enum {
-    CM_SRC_GND  = 0,
-    CM_SRC_OSC  = 1,
-    CM_SRC_TESTDEBUG0 = 2,
-    CM_SRC_TESTDEBUG1 = 3,
-    CM_SRC_PLLA = 4,
-    CM_SRC_PLLC = 5,
-    CM_SRC_PLLD = 6,
-    CM_SRC_HDMI = 7
-} CM_ClockSource;
-
-typedef enum {
-    CM_CTL_ENAB = (1 << 4),
-    CM_CTL_KILL = (1 << 5),
-    CM_CTL_GATE = (1 << 6),
-    CM_CTL_BUSY = (1 << 7),
-
-    CM_CTL_FLIP = (1 << 8),
-
-    CM_CTL_MASH_0 = (0 << 9),
-    CM_CTL_MASH_1 = (1 << 9),
-    CM_CTL_MASH_2 = (2 << 9),
-    CM_CTL_MASH_3 = (3 << 9)
-} CM_ControlBits;
-
-typedef enum {
-    CM_DIV_DIVF_SHIFT = 0,
-    CM_DIV_DIVI_SHIFT = 12
-} CM_DividerShift;
+extern GPCLK pcm_clk;
 
 #define PCM_BASE 0x20203000
 
@@ -49,7 +15,7 @@ enum {
     PCM_TXC_A      = PCM_BASE + 0x10,
     PCM_DREQ_A     = PCM_BASE + 0x14,
     PCM_INTEN_A    = PCM_BASE + 0x18,
-    PCM_INT_STC_A  = PCM_BASE + 0x1C,
+    PCM_INTSTC_A  = PCM_BASE + 0x1C,
     PCM_GRAY       = PCM_BASE + 0x20,
 };
 
@@ -127,6 +93,7 @@ enum PCM_CHCFG_Bits {
     PCM_CH1_POS_16           = 16 << 20,
     PCM_CH1_POS_24           = 24 << 20,
     PCM_CH1_POS_32           = 32 << 20,
+    PCM_CH1_POS_33           = 33 << 20,
 
     PCM_CH2_EN               = 1 << 14,
     PCM_CH2_WID_MASK         = 0xF << 0,
@@ -140,7 +107,15 @@ enum PCM_CHCFG_Bits {
     PCM_CH2_POS_8            = 8 << 4,
     PCM_CH2_POS_16           = 16 << 4,
     PCM_CH2_POS_24           = 24 << 4,
-    PCM_CH2_POS_32           = 32 << 4
+    PCM_CH2_POS_32           = 32 << 4,
+    PCM_CH2_POS_33           = 33 << 4,
+};
+
+enum PCM_INT_Bits {
+    PCM_INT_TXW            = 1 << 0,
+    PCM_INT_RXR            = 1 << 1,
+    PCM_INT_TXERR          = 1 << 2,
+    PCM_INT_RXERR          = 1 << 3,
 };
 
 typedef struct I2S_t {
@@ -166,3 +141,4 @@ bool I2S_TX_Full();
 bool I2S_RX_Ready();
 void I2S_Send_Value(uint32_t frame); // sends a left word with empty right word
 uint32_t I2S_Read_Value(); // will read a whole frame and only give left word
+uint32_t I2S_Echo_Value(); // will read a whole frame and only give left word

@@ -1,18 +1,17 @@
 #include "i2s.h"
+#include "gpclk.h"
 #include "utils.h"
 
+GPCLK pcm_clk = {
+    .clk_periph = PCMCLK,
+    .source = GPCLK_SRC_PLLD,
+    .speed = 3125000
+    // .speed = 3072000
+};
+
+
 void PCM_Clock_Setup() {
-    PUT32(CM_PCMCTL, CM_PASSWD | CM_CTL_KILL);
-
-    while (GET32(CM_PCMCTL) & CM_CTL_BUSY);
-
-    PUT32(CM_PCMDIV,
-        CM_PASSWD |
-        (162 << CM_DIV_DIVI_SHIFT) |
-        (3113 << CM_DIV_DIVF_SHIFT));
-
-    PUT32(CM_PCMCTL, CM_PASSWD | CM_SRC_PLLD | CM_CTL_MASH_1 | CM_CTL_ENAB);
-    while (!(GET32(CM_PCMCTL) & CM_CTL_BUSY));  // wait for stable clock
+    GPCLK_Init(&pcm_clk);
 }
 
 void I2S_Init(I2S *i2s) {
@@ -21,7 +20,7 @@ void I2S_Init(I2S *i2s) {
     PCM_Clock_Setup();
     PUT32(PCM_CS_A, PCM_CS_EN);
     PUT32(PCM_MODE_A, PCM_MODE_CLK_DIS); // disable clock prior to configuring mode?
-    PUT32(PCM_MODE_A, PCM_MODE_FSI | (((i2s->frame_size * 2)-1) << PCM_MODE_FLEN_BIT) | (i2s->frame_size << PCM_MODE_FSLEN_BIT));
+    PUT32(PCM_MODE_A, PCM_MODE_FSI | PCM_MODE_CLKI | (((i2s->frame_size * 2)-1) << PCM_MODE_FLEN_BIT) | (i2s->frame_size << PCM_MODE_FSLEN_BIT));
     uint32_t rx_data_size = ((i2s->rx_data_size - 8) << PCM_CH1_WID_BIT);
     uint32_t tx_data_size = ((i2s->tx_data_size - 8) << PCM_CH1_WID_BIT);
     if (i2s->rx_data_size >= 24) {
@@ -30,8 +29,19 @@ void I2S_Init(I2S *i2s) {
     if (i2s->tx_data_size >= 24) {
         tx_data_size = PCM_CH1_WEX | (i2s->tx_data_size - 24) << PCM_CH1_WID_BIT;
     }
-    PUT32(PCM_RXC_A, PCM_CH1_EN | PCM_CH1_POS_1 | rx_data_size); // pos 1 for i2s
-    PUT32(PCM_TXC_A, PCM_CH1_EN | PCM_CH1_POS_1 | tx_data_size);
+    // PUT32(PCM_RXC_A, PCM_CH1_EN | PCM_CH1_POS_1 | rx_data_size); // pos 1 for i2s
+    // PUT32(PCM_TXC_A, PCM_CH1_EN | PCM_CH1_POS_1 | tx_data_size);
+    // RX: Enable both channels
+    PUT32(PCM_RXC_A, 
+        PCM_CH1_EN | PCM_CH1_POS_1 | rx_data_size |  // Left channel
+        PCM_CH2_EN | PCM_CH2_POS_33 | (rx_data_size >> 16)   // Right channel (pos 33 = frame_size + 1)
+    );
+
+    // TX: Enable both channels  
+    PUT32(PCM_TXC_A, 
+        PCM_CH1_EN | PCM_CH1_POS_1 | tx_data_size |  // Left channel
+        PCM_CH2_EN | PCM_CH2_POS_33 | (tx_data_size >> 16)   // Right channel
+    );
     I2S_Clear_Flags();
     UART_Send_String("Fifo about to clear");
     I2S_Clear_FIFO();
@@ -57,10 +67,9 @@ void I2S_Init(I2S *i2s) {
 void I2S_Wait_2() {
     if (GET32(PCM_MODE_A) & PCM_MODE_CLK_DIS)
         return;
-
     uint32_t current_value = GET32(PCM_CS_A);
-    PUT32(PCM_CS_A, current_value ^ PCM_CS_SYNC); // invert the current sync val; wait for it to match
-    while (GET32(PCM_CS_A) != (current_value ^ PCM_CS_SYNC));
+    PUT32(PCM_CS_A, current_value ^ PCM_CS_SYNC);
+    while ((GET32(PCM_CS_A) & PCM_CS_SYNC) != ((current_value ^ PCM_CS_SYNC) & PCM_CS_SYNC));
 }
 
 void I2S_Clear_Flags() {
@@ -101,4 +110,23 @@ uint32_t I2S_Read_Value() {
     while (!I2S_RX_Ready());
     GET32(PCM_FIFO_A);
     return out;
+}
+
+uint32_t I2S_Echo_Value() {
+    uint32_t left;
+    
+    while (!I2S_RX_Ready());
+    left = GET32(PCM_FIFO_A);
+    
+    while (!I2S_RX_Ready());
+    GET32(PCM_FIFO_A);
+    
+    // Immediately write both to keep sync
+    while (I2S_TX_Full());
+    PUT32(PCM_FIFO_A, left);
+    
+    while (I2S_TX_Full());
+    PUT32(PCM_FIFO_A, left);  // or right, or 0
+    
+    return left;
 }

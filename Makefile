@@ -6,7 +6,7 @@
 # NOTE: this variable and many of the others are not required:
 # we use them to (try to) add clarify.  The only real requirement
 # is specifying what depends on what (the rules from "all:" to EOF).
-PROG_SRC := main.c
+PROG_SRC := $(filter-out utils.c interrupts.c hardware.c, $(wildcard *.c))
 
 # 2) For each PROG_SRC X.c we build a X.bin
 PROGS := $(PROG_SRC:.c=.bin)

@@ -39,6 +39,6 @@ _reset_:
     stmia   r1!,{r2, r3, r4, r5, r6, r7, r8, r9}
     ldmia   r0!,{r2, r3, r4, r5, r6, r7, r8, r9}
     stmia   r1!,{r2, r3, r4, r5, r6, r7, r8, r9}
-    cpsie i
+    @ cpsie i
     bl main
 

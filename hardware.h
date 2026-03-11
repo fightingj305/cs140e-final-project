@@ -5,6 +5,7 @@
 #include "i2c.h"
 #include "ads1115.h"
 #include "i2s.h"
+#include "gpclk.h"
 
 extern UART uart;
 extern const Pin rx;
@@ -21,3 +22,4 @@ extern const Pin din;
 extern const Pin dout;
 
 extern ADS1115 ads;
+extern GPCLK pcm1808_sck;
