@@ -23,6 +23,7 @@ int main() {
 
     I2S_Clear_Flags();
     I2S_Enable_Comms();
+    
     UART_Send_String("Running\n");
 
     while (1) {

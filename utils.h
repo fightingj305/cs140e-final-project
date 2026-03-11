@@ -2,15 +2,24 @@
 
 #include <stdint.h>
 #include "miniuart.h"
+
+#define CPU_HZ        700000000UL   // 700MHz
+#define CYCLES_PER_US (CPU_HZ / 1000000UL)  // 700
+#define CYCLES_PER_MS (CPU_HZ / 1000UL)     // 700000
+
 #define ASSERT(x) \
     do { \
         if(!(x)) PANIC("Assertion failed: " #x); \
     } while(0)
 
-    #define DELAY(x) do { \
-        for(volatile uint32_t i = (x); i > 0; i--); \
+#define DELAY(cycles) do { \
+        for (volatile uint32_t i = (cycles); i > 0; i--); \
     } while(0)
-   
+
+#define DELAY_US(x) DELAY((x) * CYCLES_PER_US)
+
+#define DELAY_MS(x) DELAY((x) * CYCLES_PER_MS)
+
 #define PANIC(msg) do { \
         UART_Send_String("PANIC: "); \
         UART_Send_String(msg); \

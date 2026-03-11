@@ -3,9 +3,16 @@
 #define ST7789_DC_DATA HIGH
 #define ST7789_DC_COMMAND LOW
 
+#define TFT_WIDTH 240
+#define TFT_HEIGHT 320
+#define TFT_BUFFER_SIZE TFT_WIDTH * TFT_HEIGHT
+
+// extern uint16_t st7789_buffer[TFT_WIDTH * TFT_HEIGHT] __attribute__((section(".bss")));
 typedef struct ST7789_t {
     SPI *spi;
+    SPI_Device spi_device;
     Pin dc; // data/command pin (woo i love 5 wire spi)
+    uint16_t *buffer;
 } ST7789;
 
 typedef enum ST7789_Command_t {
@@ -59,7 +66,26 @@ typedef enum ST7789_Command_t {
     ST7789_RDID3      = 0xDC,
 } ST7789_Command;
 
+
+enum ST7789_COLMOD_Settings {
+    ST7789_12_BIT      = 0b011,
+    ST7789_16_BIT      = 0b101,
+    ST7789_18_BIT      = 0b110,
+    ST7789_16_M_BIT    = 0b111,
+
+    ST7789_RGB_65K     = 0b101 << 4,
+    ST7789_RGB_262K    = 0b110 << 4,
+};
+
 void ST7789_Send_Command(ST7789 *st7789, ST7789_Command command);
 void ST7789_Send_Data_Byte(ST7789 *st7789, uint8_t byte);
 
 void ST7789_Init(ST7789 *st7789);
+
+void ST7789_Set_Range(ST7789 *st7789, uint16_t lcol, uint16_t rcol, uint16_t trow, uint16_t brow);
+// draws a block of w x h from x, y (with 0,0 top left) and a buffer of 16-bit 5-6-5 RGB values 
+void ST7789_Write_Range(ST7789 *st7789, uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t *buffer);
+uint16_t ST7789_RGB_To_16(uint8_t r, uint8_t g, uint8_t b);
+
+void ST7789_Set_Pixel(ST7789 *st7789, uint16_t *buffer, uint32_t x, uint32_t y, uint16_t val);
+void ST7789_Write_Buffer(ST7789 *st7789, uint16_t *buffer);

@@ -27,11 +27,12 @@ SECTIONS
     } 
 
     /* 0 data */
-    .bss : { 
-        *(.bss*) 
+    .bss : {
+        __bss_start = .;
+        *(.bss*)
         . = ALIGN(8);
+        __bss_end = .;
     }
-
     /* discard debug info so the .lists are smaller */
     /DISCARD/ : { *(.debug*) }
     /DISCARD/ : { *(.comment*) }

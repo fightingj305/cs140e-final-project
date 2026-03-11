@@ -21,7 +21,6 @@ _start:
     ldr pc, _unused_handler_h
     ldr pc, _interrupt_vector_h
     ldr pc, _fast_interrupt_vector_h
-    mov sp, #0x8000000 
 
 _reset_h:                           .word   _reset_
 _undefined_instruction_vector_h:    .word   undefined_instruction_vector
@@ -33,12 +32,13 @@ _interrupt_vector_h:                .word   interrupt_vector
 _fast_interrupt_vector_h:           .word   fast_interrupt_vector
 
 _reset_:
+    mov     sp, #0x8000000 
     mov     r0, #0x8000
     mov     r1, #0x0000
     ldmia   r0!,{r2, r3, r4, r5, r6, r7, r8, r9}
     stmia   r1!,{r2, r3, r4, r5, r6, r7, r8, r9}
     ldmia   r0!,{r2, r3, r4, r5, r6, r7, r8, r9}
     stmia   r1!,{r2, r3, r4, r5, r6, r7, r8, r9}
-    @ cpsie i
+    cpsie i
     bl main
 

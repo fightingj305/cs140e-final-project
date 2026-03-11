@@ -3,10 +3,18 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+// driver for the ARM timer plus a bit of sys timer stuff for delays
+
 #define TIM_BASE 0x2000B000
+
+#define TIM_SYS_BASE 0x20003000
+
+
 #define IRQ_EN_BIT 5
 #define EN_BIT 7
+
 #define CORE_CLOCK_RATE 250000000
+#define ARM_CLOCK_RATE 700000000
 
 enum {
     TIM_LOAD = TIM_BASE + 0x400,
@@ -19,8 +27,36 @@ enum {
     TIM_PREDIVIDER = TIM_BASE + 0x41C,
 };
 
+enum TIM_CTRL_Bits {
+    TIM_CTRL_FREE_RUNNING_COUNTER           = 1 << 9,
+
+    TIM_CTRL_TIMER_HALT                     = 1 << 8,
+
+    TIM_CTRL_TIMER_ENABLE                   = 1 << 7,
+
+    TIM_CTRL_TIMER_INTERRUPT                = 1 << 5,
+
+    TIM_CTRL_PRESCALE_NONE                  = 0 << 2,
+    TIM_CTRL_PRESCALE_16                    = 1 << 2,
+    TIM_CTRL_PRESCALE_256                   = 2 << 2,
+
+    TIM_CTRL_16BIT_COUNTER                  = 0 << 1,
+    TIM_CTRL_23BIT_COUNTER                  = 1 << 1
+};
+
+enum {
+    TIM_SYS_CS = TIM_SYS_BASE + 0x0,
+    TIM_SYS_CLO = TIM_SYS_BASE + 0x4,
+    TIM_SYS_CHI = TIM_SYS_BASE + 0x8,
+    TIM_SYS_C0 = TIM_SYS_BASE + 0xC,
+    TIM_SYS_C1 = TIM_SYS_BASE + 0x10,
+    TIM_SYS_C2 = TIM_SYS_BASE + 0x14,
+    TIM_SYS_C3 = TIM_SYS_BASE + 0x18,
+};
+
 bool TIM_Pending(void);
 void TIM_Clear_Pending(void);
 void TIM_Set_Load(uint32_t value);
 void TIM_Enable(void);
 void TIM_Disable(void);
+void TIM_SYS_Delay_Millis(uint32_t ms);

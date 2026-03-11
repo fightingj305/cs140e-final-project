@@ -139,6 +139,7 @@ void I2S_Disable_Comms();
 void I2S_Disable();
 bool I2S_TX_Full();
 bool I2S_RX_Ready();
+void I2S_Enable_IRQ();
+void I2S_Clear_IRQ();
 void I2S_Send_Value(uint32_t frame); // sends a left word with empty right word
 uint32_t I2S_Read_Value(); // will read a whole frame and only give left word
-uint32_t I2S_Echo_Value(); // will read a whole frame and only give left word

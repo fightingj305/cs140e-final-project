@@ -21,7 +21,6 @@ I2C i2c = {
     .speed_hz = 400000
 };
 
-
 const Pin bclk = {18};
 const Pin fs = {19};
 const Pin din = {20};
@@ -37,14 +36,39 @@ I2S i2s = {
     .dout = dout
 };
 
+const Pin mosi = {10};
+const Pin miso = {9};
+const Pin sclk = {11};
+const Pin cs0 = {8};
+const Pin cs1 = {7};
+const Pin dc = {12};
 
-ADS1115 ads = {
-    .i2c = &i2c,
+SPI spi = {
+    .speed = 4000000, // 4 MHz
+    .cpol = CPOL_0,
+    .cpha = CPHA_0,
+    .msb_first = true,
+
+    .mosi = mosi,
+    .miso = miso,
+    .sclk = sclk,
+    .cs0 = cs0,
+    .cs1 = cs1
 };
 
 GPCLK pcm1808_sck = {
     .clk_periph = GPCLK0,
     .source = GPCLK_SRC_PLLD,
-    // .speed = 3072000 * 8 // 24.576 MHz = 512 * fs
     .speed = 3125000 * 8
+};
+
+ADS1115 ads = {
+    .i2c = &i2c,
+};
+
+
+ST7789 st7789 = {
+    .spi = &spi,
+    .spi_device = SPI_DEVICE_0,
+    .dc = dc
 };

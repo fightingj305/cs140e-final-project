@@ -1,12 +1,12 @@
 #include "i2s.h"
 #include "gpclk.h"
 #include "utils.h"
+#include "interrupts.h"
 
 GPCLK pcm_clk = {
     .clk_periph = PCMCLK,
     .source = GPCLK_SRC_PLLD,
     .speed = 3125000
-    // .speed = 3072000
 };
 
 
@@ -29,23 +29,18 @@ void I2S_Init(I2S *i2s) {
     if (i2s->tx_data_size >= 24) {
         tx_data_size = PCM_CH1_WEX | (i2s->tx_data_size - 24) << PCM_CH1_WID_BIT;
     }
-    // PUT32(PCM_RXC_A, PCM_CH1_EN | PCM_CH1_POS_1 | rx_data_size); // pos 1 for i2s
-    // PUT32(PCM_TXC_A, PCM_CH1_EN | PCM_CH1_POS_1 | tx_data_size);
-    // RX: Enable both channels
     PUT32(PCM_RXC_A, 
-        PCM_CH1_EN | PCM_CH1_POS_1 | rx_data_size |  // Left channel
-        PCM_CH2_EN | PCM_CH2_POS_33 | (rx_data_size >> 16)   // Right channel (pos 33 = frame_size + 1)
+        PCM_CH1_EN | PCM_CH1_POS_1 | rx_data_size |
+        PCM_CH2_EN | PCM_CH2_POS_33 | (rx_data_size >> 16)
     );
 
-    // TX: Enable both channels  
     PUT32(PCM_TXC_A, 
-        PCM_CH1_EN | PCM_CH1_POS_1 | tx_data_size |  // Left channel
-        PCM_CH2_EN | PCM_CH2_POS_33 | (tx_data_size >> 16)   // Right channel
+        PCM_CH1_EN | PCM_CH1_POS_1 | tx_data_size |
+        PCM_CH2_EN | PCM_CH2_POS_33 | (tx_data_size >> 16)
     );
+
     I2S_Clear_Flags();
-    UART_Send_String("Fifo about to clear");
     I2S_Clear_FIFO();
-    UART_Send_String("Fifo clear");
 
     if (i2s->bclk.pin_num == 18 && i2s->fs.pin_num == 19 && i2s->din.pin_num == 20 && i2s->dout.pin_num == 21) {
         GPIO_Config(&i2s->bclk, AF0);
@@ -96,6 +91,17 @@ bool I2S_RX_Ready() {
     return (GET32(PCM_CS_A) & PCM_CS_RXD) != 0;
 }
 
+void I2S_Enable_IRQ() {
+    RMW_AND(PCM_CS_A, ~PCM_CS_RXTHR_MASK);
+    RMW_OR(PCM_CS_A, PCM_CS_RXTHR_ONE); // set rxr threshold to one sample
+    PUT32(PCM_INTEN_A, PCM_INT_RXR);
+    IRQ_Enable_Interrupt(IRQ_PCM_INT);
+}
+
+void I2S_Clear_IRQ() {
+    RMW_AND(PCM_INTSTC_A, PCM_INT_RXR);
+}
+
 void I2S_Send_Value(uint32_t frame) {
     while (I2S_TX_Full());
     PUT32(PCM_FIFO_A, frame);
@@ -110,23 +116,4 @@ uint32_t I2S_Read_Value() {
     while (!I2S_RX_Ready());
     GET32(PCM_FIFO_A);
     return out;
-}
-
-uint32_t I2S_Echo_Value() {
-    uint32_t left;
-    
-    while (!I2S_RX_Ready());
-    left = GET32(PCM_FIFO_A);
-    
-    while (!I2S_RX_Ready());
-    GET32(PCM_FIFO_A);
-    
-    // Immediately write both to keep sync
-    while (I2S_TX_Full());
-    PUT32(PCM_FIFO_A, left);
-    
-    while (I2S_TX_Full());
-    PUT32(PCM_FIFO_A, left);  // or right, or 0
-    
-    return left;
 }

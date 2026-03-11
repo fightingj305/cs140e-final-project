@@ -6,6 +6,8 @@
 #include "ads1115.h"
 #include "i2s.h"
 #include "gpclk.h"
+#include "spi.h"
+#include "st7789.h"
 
 extern UART uart;
 extern const Pin rx;
@@ -21,5 +23,16 @@ extern const Pin fs;
 extern const Pin din;
 extern const Pin dout;
 
-extern ADS1115 ads;
+extern SPI spi;
+extern const Pin mosi;
+extern const Pin miso;
+extern const Pin sclk;
+extern const Pin cs0;
+extern const Pin cs1;
+extern const Pin dc;
+
 extern GPCLK pcm1808_sck;
+
+extern ADS1115 ads;
+
+extern ST7789 st7789;
