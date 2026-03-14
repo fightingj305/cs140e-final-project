@@ -56,6 +56,11 @@ void UART_Send_Int(uint32_t num) {
     }
 }
 
+void UART_Print_Int(uint32_t num) {
+    UART_Send_Int(num);
+    UART_Send_Byte('\n');
+}
+
 
 void UART_Send_Hex(uint32_t num) {
     UART_Send_String("0x");
@@ -70,6 +75,11 @@ void UART_Send_Hex(uint32_t num) {
     }
 }
 
+
+void UART_Print_Hex(uint32_t num) {
+    UART_Send_Hex(num);
+    UART_Send_Byte('\n');
+}
 uint8_t UART_Receive_Byte() {
     while(!UART_RX_Ready());
     return (uint8_t) (GET32(AUX_MU_IO_REG) & 0xFF);

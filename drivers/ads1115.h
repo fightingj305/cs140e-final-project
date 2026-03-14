@@ -79,6 +79,8 @@ typedef enum ADS1115_CHANNELS { // 16 bit
 // PGA 4.096 V allows us to read up to 4.096V; max 16-bit signed value of 32768 = 4.096 so 3.3V reads 26400 theoretically
 #define ADS_DEFAULT_CONFIG ADS_CONFIG_PGA_4_096V | ADS_CONFIG_MODE_SINGLESHOT | ADS_CONFIG_DR_250SPS | ADS_CONFIG_COMP_DISABLE 
 
+#define ADS_MAX_VALUE 26400
+
 typedef struct ADS1115_t {
     I2C *i2c; // associated I2C instance
     ADS_Reg last_register; // internal state to avoid redundant sends

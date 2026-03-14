@@ -43,3 +43,21 @@ volatile uint32_t get32(volatile uint32_t *addr);
 
 void RMW_OR(uint32_t reg, uint32_t mask);
 void RMW_AND(uint32_t reg, uint32_t mask);
+
+void interrupts_on();
+void interrupts_off();
+
+
+static inline void ISB(void) {
+    asm volatile("mcr p15, 0, %0, c7, c5, 4" :: "r"(0) : "memory");\
+}
+
+static inline void DSB(void) {
+    asm volatile("mcr p15, 0, %0, c7, c10, 4" :: "r"(0) : "memory");
+    ISB();
+}
+
+static inline void DMB(void) {
+    asm volatile("mcr p15, 0, %0, c7, c10, 5" :: "r"(0) : "memory");
+    ISB();
+}

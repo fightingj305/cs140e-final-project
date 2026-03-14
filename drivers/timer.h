@@ -54,9 +54,13 @@ enum {
     TIM_SYS_C3 = TIM_SYS_BASE + 0x18,
 };
 
+bool TIM_Check_IRQ(void);
 bool TIM_Pending(void);
 void TIM_Clear_Pending(void);
+void TIM_Set_Frequency(uint32_t hz);
 void TIM_Set_Load(uint32_t value);
 void TIM_Enable(void);
 void TIM_Disable(void);
+void TIM_Enable_IRQ(void);
+void TIM_Disable_IRQ(void);
 void TIM_SYS_Delay_Millis(uint32_t ms);

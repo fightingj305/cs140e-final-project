@@ -6,7 +6,7 @@
 # NOTE: this variable and many of the others are not required:
 # we use them to (try to) add clarify.  The only real requirement
 # is specifying what depends on what (the rules from "all:" to EOF).
-PROG_SRC := $(filter-out utils.c interrupts.c hardware.c, $(wildcard *.c))
+PROG_SRC := $(filter-out utils.c interrupts.c hardware.c threads.c, $(wildcard *.c))
 
 # 2) For each PROG_SRC X.c we build a X.bin
 PROGS := $(PROG_SRC:.c=.bin)
@@ -17,6 +17,8 @@ DRIVER_SRC := $(wildcard drivers/*.c)
 
 OBJS := start.o utils.o interrupts.o hardware.o
 OBJS += $(DRIVER_SRC:.c=.o)
+
+THREAD_OBJS := threads.o threads-asm.o  # ← add this line
 
 # The linker script decides where code/data go in memory.
 MEMMAP := ./memmap
@@ -41,6 +43,18 @@ CFLAGS += -I. -Idrivers
 
 # 5) The default target: build all binaries.
 all: $(PROGS)
+
+
+threaded_main.bin: threaded_main.o $(THREAD_OBJS) $(OBJS) $(MEMMAP)
+	$(CC) $(CFLAGS) start.o $< $(THREAD_OBJS) $(filter-out start.o, $(OBJS)) -T $(MEMMAP) -lgcc -o threaded_main.elf
+	$(ARM)-objcopy threaded_main.elf -O binary $@
+	$(ARM)-objdump -D threaded_main.elf > threaded_main.list
+
+
+threads_test.bin: threads_test.o $(THREAD_OBJS) $(OBJS) $(MEMMAP)
+	$(CC) $(CFLAGS) start.o $< $(THREAD_OBJS) $(filter-out start.o, $(OBJS)) -T $(MEMMAP) -lgcc -o threads_test.elf
+	$(ARM)-objcopy threads_test.elf -O binary $@
+	$(ARM)-objdump -D threads_test.elf > threads_test.list
 
 # 6) The rule for building a .bin.  We incidentally also
 # produce a .elf and .list (disassembled elf).

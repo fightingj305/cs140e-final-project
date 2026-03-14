@@ -5,7 +5,6 @@
 #include <stdint.h>
 #include "gpclk.h"
 #include "interrupts.h"
-#include "effects.h"
 
 #define DISPLAY_ROWS       TFT_HEIGHT
 #define DOWNSAMPLE         4
@@ -15,16 +14,14 @@ volatile int32_t sample_buffer[SAMPLE_BUFFER_SIZE];
 volatile uint32_t sample_write = 0;
 uint32_t sample_read = 0;
 
-
 void __attribute__((interrupt("IRQ"))) interrupt_vector(void) {
     uint32_t adc_val = I2S_Read_Value();
 
     int32_t signed_val = (int32_t)(adc_val << 8) >> 8;
-    signed_val = signed_val << 2;
-        
-    signed_val = process_signal(signed_val);
-
-    // UART_Send_String("irq\n");
+    signed_val = signed_val << 3;
+    
+    if (signed_val > 8388607)  signed_val =  8388607;
+    if (signed_val < -8388608) signed_val = -8388608;
 
     sample_buffer[sample_write & (SAMPLE_BUFFER_SIZE - 1)] = signed_val;
     sample_write++;
@@ -40,14 +37,11 @@ static inline int32_t sample_to_x(int32_t s) {
     return x;
 }
 
-
 int main() {
     UART_Disable();
     UART_Config(&uart);
     UART_Enable();
     UART_Send_String("ST test\n");
-    
-    ADS1115_Init(&ads);    
 
     ST7789_Init(&st7789);
 
@@ -67,7 +61,6 @@ int main() {
     I2S_Enable_IRQ();
     I2S_Enable_Comms();
     I2S_Clear_Flags();
-    interrupts_on();
     UART_Send_String("Running\n");
 
     uint16_t black = ST7789_RGB_To_16(0, 0, 0);
@@ -77,18 +70,8 @@ int main() {
         cur_frame[i] = TFT_WIDTH / 2;
     }
     uint16_t row[TFT_WIDTH];
-
     while (1) {
-        uint32_t read_value0 = ADS1115_Read_Channel(&ads, ADS_AIN0);
-        uint16_t read_value1 = ADS1115_Read_Channel(&ads, ADS_AIN1);
-        uint16_t read_value2 = ADS1115_Read_Channel(&ads, ADS_AIN2);
-        uint16_t read_value3 = ADS1115_Read_Channel(&ads, ADS_AIN3);
-        set_cutoff(read_value0);
-        set_overdrive(read_value1);
-        set_delay_time(read_value2);
-        set_delay_feedback(read_value3);
-    // UART_Send_String("Running\n");
-
+        // --- collect a full frame of samples ---
         for (int i = 0; i < DISPLAY_ROWS; i++) {
             uint32_t target = sample_read + DOWNSAMPLE;
             while ((int32_t)(sample_write - target) < 0);

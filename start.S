@@ -32,6 +32,7 @@ _interrupt_vector_h:                .word   interrupt_vector
 _fast_interrupt_vector_h:           .word   fast_interrupt_vector
 
 _reset_:
+    cpsid i
     mov     sp, #0x8000000 
     mov     r0, #0x8000
     mov     r1, #0x0000
@@ -39,6 +40,17 @@ _reset_:
     stmia   r1!,{r2, r3, r4, r5, r6, r7, r8, r9}
     ldmia   r0!,{r2, r3, r4, r5, r6, r7, r8, r9}
     stmia   r1!,{r2, r3, r4, r5, r6, r7, r8, r9}
-    cpsie i
+    
+
+    mrs r0, cpsr
+    bic r0, r0, #0x1F
+    orr r0, r0, #0x12       @ IRQ mode
+    msr cpsr_c, r0
+    mov sp, #0x6000000      @ IRQ stack — below supervisor stack
+
+    bic r0, r0, #0x1F
+    orr r0, r0, #0x13       @ supervisor mode
+    msr cpsr_c, r0
+
     bl main
 

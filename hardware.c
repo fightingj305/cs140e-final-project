@@ -44,7 +44,7 @@ const Pin cs1 = {7};
 const Pin dc = {12};
 
 SPI spi = {
-    .speed = 4000000, // 4 MHz
+    .speed = 40000000, // 40 MHz
     .cpol = CPOL_0,
     .cpha = CPHA_0,
     .msb_first = true,
@@ -72,3 +72,5 @@ ST7789 st7789 = {
     .spi_device = SPI_DEVICE_0,
     .dc = dc
 };
+
+Pin effect_control = {5};

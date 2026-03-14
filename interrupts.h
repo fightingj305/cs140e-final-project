@@ -1,4 +1,5 @@
 #pragma once
+#include "stdbool.h"
 
 #define IRQ_BASE 0x2000B000
 
@@ -58,3 +59,5 @@ typedef enum IRQ_Source_t {
 bool IRQ_Check_Interrupt(IRQ_Source source);
 void IRQ_Enable_Interrupt(IRQ_Source source);
 void IRQ_Disable_Interrupt(IRQ_Source source);
+
+void c_interrupt_handler(void);

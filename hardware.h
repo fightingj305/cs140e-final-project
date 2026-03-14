@@ -36,3 +36,5 @@ extern GPCLK pcm1808_sck;
 extern ADS1115 ads;
 
 extern ST7789 st7789;
+
+extern Pin effect_control;

@@ -68,3 +68,7 @@ void  __attribute__((interrupt("IRQ"), weak)) interrupt_vector(void) {
 void __attribute__((interrupt("IRQ"), weak)) fast_interrupt_vector(void) {
     return;
 }
+
+void __attribute__((weak)) c_interrupt_handler() {
+    return;
+}
