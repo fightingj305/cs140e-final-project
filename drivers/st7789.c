@@ -25,7 +25,6 @@ void ST7789_Set_Range(ST7789 *st7789, uint16_t lcol, uint16_t rcol, uint16_t tro
     ST7789_Send_Data_Byte(st7789, brow);
 }
 
-// draws a block of w x h from x, y (with 0,0 top left) and a buffer of 16-bit 5-6-5 RGB values 
 void ST7789_Write_Range(ST7789 *st7789, uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t *buffer) {
     ST7789_Set_Range(st7789, x, x + w - 1, y, y + h - 1);
     
@@ -54,10 +53,8 @@ void ST7789_Init(ST7789 *st7789) {
     SPI_Config(st7789->spi);
     GPIO_Config(&st7789->dc, OUTPUT);
     ST7789_Send_Command(st7789, ST7789_SWRESET);
-    UART_Send_String("Resetting\n");
     TIM_SYS_Delay_Millis(120);
     ST7789_Send_Command(st7789, ST7789_SLPOUT);
-    UART_Send_String("Exiting Sleep\n");
     TIM_SYS_Delay_Millis(120);
     ST7789_Send_Command(st7789, ST7789_NORON);
     ST7789_Send_Command(st7789, ST7789_COLMOD);
@@ -68,5 +65,9 @@ void ST7789_Init(ST7789 *st7789) {
     ST7789_Send_Data_Byte(st7789, (1 << 2) | (1 << 5));
     ST7789_Send_Command(st7789, ST7789_DISPON);
     ST7789_Send_Command(st7789, ST7789_INVON);
-    UART_Send_String("Display On\n");
+    uint16_t buffer[TFT_BUFFER_SIZE];
+    for (uint32_t i = 0; i < TFT_BUFFER_SIZE; i++) {
+        buffer[i] = ST7789_BLACK;
+    }
+    ST7789_Write_Buffer(st7789, buffer);
 }

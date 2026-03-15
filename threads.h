@@ -3,6 +3,8 @@
 #include "stdint.h"
 #include "interrupts.h"
 
+#define SUPERVISOR_MODE 0x13
+
 typedef struct context_t {
     uint32_t r0;   // offset 0
     uint32_t r1;   // offset 4

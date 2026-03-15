@@ -1,22 +1,10 @@
 #include "utils.h"
-#include "timer.h"
-#include "miniuart.h"
 #include "interrupts.h"
-#include "gpio.h"
-#include "hardware.h"
-#include <stdlib.h>
-
 
 bool IRQ_Check_Interrupt(IRQ_Source source) {
     if (source >= IRQ_AUX_INT) { // rather hacky way to check since the peripheral IRQs below 29 are unused
-        IRQ_Source base_int = source < 32 ? IRQ_PERIPH_1_INT : IRQ_PERIPH_2_INT;
         uint32_t pending_reg = source < 32 ? IRQ_PENDING_1 : IRQ_PENDING_2;
-        if ((GET32(IRQ_BASE_PENDING) >> base_int) & 1) {
-            return (GET32(pending_reg) >> (source % 32)) & 1;
-        }
-        else {
-            return false;
-        }
+        return (GET32(pending_reg) >> (source % 32)) & 1;
     }
     else {
         return (GET32(IRQ_BASE_PENDING) >> source) & 1;

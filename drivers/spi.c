@@ -21,21 +21,21 @@ void SPI_Config(SPI *spi) {
     PUT32(SPI0_CS, (spi->cpha << SPI0_CS_CPHA_BIT) | (spi->cpol << SPI0_CS_CPOL_BIT));
 }
 
-void SPI_Clear_FIFOs() {
+void SPI_Clear_FIFOs(void) {
     PUT32(SPI0_CS, GET32(SPI0_CS) | (1 << SPI0_CS_CLEAR_RX_BIT) | (1 << SPI0_CS_CLEAR_TX_BIT));
 }
 
-bool SPI_TX_Full()
+bool SPI_TX_Full(void)
 {
     return ~(GET32(SPI0_CS) >> SPI0_CS_TXD_BIT) & 1;
 }
 
-bool SPI_RX_Empty()
+bool SPI_RX_Empty(void)
 {
     return ~(GET32(SPI0_CS) >> SPI0_CS_RXD_BIT) & 1;
 }
 
-bool SPI_Transfer_Done()
+bool SPI_Transfer_Done(void)
 {
     return (GET32(SPI0_CS) >> SPI0_CS_DONE_BIT) & 1;
 }

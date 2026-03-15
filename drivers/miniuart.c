@@ -1,13 +1,13 @@
 #include "miniuart.h"
 #include "utils.h"
 
-void UART_Enable() {
+void UART_Enable(void) {
     uint32_t old_state = GET32(AUX_ENABLES);
     PUT32(AUX_ENABLES, old_state | 1);
     
 }
 
-void UART_Disable() {
+void UART_Disable(void) {
     uint32_t old_state = GET32(AUX_ENABLES);
     PUT32(AUX_ENABLES, old_state & (~1));
 }
@@ -80,23 +80,23 @@ void UART_Print_Hex(uint32_t num) {
     UART_Send_Hex(num);
     UART_Send_Byte('\n');
 }
-uint8_t UART_Receive_Byte() {
+uint8_t UART_Receive_Byte(void) {
     while(!UART_RX_Ready());
     return (uint8_t) (GET32(AUX_MU_IO_REG) & 0xFF);
 }
 
-void UART_Flush_TX() {
+void UART_Flush_TX(void) {
     while (!UART_TX_Empty());
 }
 
-bool UART_TX_Empty() {
+bool UART_TX_Empty(void) {
     return ((GET32(AUX_MU_LSR_REG) >> 6) & 1) == 1;
 }
 
-bool UART_TX_Ready() {
+bool UART_TX_Ready(void) {
     return ((GET32(AUX_MU_LSR_REG) >> 5) & 1) == 1;
 }
 
-bool UART_RX_Ready() {
+bool UART_RX_Ready(void) {
     return (GET32(AUX_MU_LSR_REG) & 1) == 1;
 }

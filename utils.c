@@ -30,10 +30,10 @@ void RMW_AND(uint32_t reg, uint32_t mask) {
     PUT32(reg, GET32(reg) & mask);
 }
 
-void interrupts_on() {
+void interrupts_on(void) {
     asm volatile ("cpsie i");
 }
 
-void interrupts_off() {
+void interrupts_off(void) {
     asm volatile ("cpsid i");
 }

@@ -9,6 +9,8 @@
 #include "spi.h"
 #include "st7789.h"
 
+// all hardware defines here!
+
 extern UART uart;
 extern const Pin rx;
 extern const Pin tx;
@@ -18,6 +20,7 @@ extern const Pin sda;
 extern const Pin scl;
 
 extern I2S i2s;
+extern GPCLK pcm_clk;
 extern const Pin bclk;
 extern const Pin fs;
 extern const Pin din;

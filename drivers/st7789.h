@@ -7,7 +7,9 @@
 #define TFT_HEIGHT 320
 #define TFT_BUFFER_SIZE TFT_WIDTH * TFT_HEIGHT
 
-// extern uint16_t st7789_buffer[TFT_WIDTH * TFT_HEIGHT] __attribute__((section(".bss")));
+#define ST7789_BLACK 0
+#define ST7789_BLUE (0x1F << 8)
+
 typedef struct ST7789_t {
     SPI *spi;
     SPI_Device spi_device;
@@ -81,7 +83,7 @@ void ST7789_Send_Command(ST7789 *st7789, ST7789_Command command);
 void ST7789_Send_Data_Byte(ST7789 *st7789, uint8_t byte);
 
 void ST7789_Init(ST7789 *st7789);
-
+// sets a range of rows and columns to write to
 void ST7789_Set_Range(ST7789 *st7789, uint16_t lcol, uint16_t rcol, uint16_t trow, uint16_t brow);
 // draws a block of w x h from x, y (with 0,0 top left) and a buffer of 16-bit 5-6-5 RGB values 
 void ST7789_Write_Range(ST7789 *st7789, uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t *buffer);

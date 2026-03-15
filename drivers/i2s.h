@@ -3,8 +3,6 @@
 #include "gpio.h"
 #include "gpclk.h"
 
-extern GPCLK pcm_clk;
-
 #define PCM_BASE 0x20203000
 
 enum {
@@ -127,19 +125,21 @@ typedef struct I2S_t {
     Pin fs;
     Pin din;
     Pin dout;
+
+    GPCLK *clk;
 } I2S;
 
-void PCM_Clock_Setup();
+void PCM_Clock_Setup(GPCLK *clk);
 void I2S_Init(I2S *i2s);
-void I2S_Wait_2();
-void I2S_Clear_FIFO();
-void I2S_Clear_Flags();
-void I2S_Enable_Comms();
-void I2S_Disable_Comms();
-void I2S_Disable();
-bool I2S_TX_Full();
-bool I2S_RX_Ready();
-void I2S_Enable_IRQ();
-void I2S_Clear_IRQ();
+void I2S_Wait_2(void);
+void I2S_Clear_FIFO(void);
+void I2S_Clear_Flags(void);
+void I2S_Enable_Comms(void);
+void I2S_Disable_Comms(void);
+void I2S_Disable(void);
+bool I2S_TX_Full(void);
+bool I2S_RX_Ready(void);
+void I2S_Enable_IRQ(void);
+void I2S_Clear_IRQ(void);
 void I2S_Send_Value(uint32_t frame); // sends a left word with empty right word
 uint32_t I2S_Read_Value(); // will read a whole frame and only give left word

@@ -38,17 +38,17 @@ enum {
     AUX_MU_BAUD_REG = AUX_BASE + 0x68,
 };
 
-void UART_Enable();
-void UART_Disable();
+void UART_Enable(void);
+void UART_Disable(void);
 void UART_Config(UART *uart);
+uint8_t UART_Receive_Byte(void);
 void UART_Send_Byte(const uint8_t byte);
 void UART_Send_String(char *str);
 void UART_Send_Int(uint32_t num);
 void UART_Send_Hex(uint32_t num);
-void UART_Print_Int(uint32_t num);
-void UART_Print_Hex(uint32_t num);
-uint8_t UART_Receive_Byte();
-void UART_Flush_TX();
-bool UART_TX_Empty();
-bool UART_TX_Ready();
-bool UART_RX_Ready();
+void UART_Print_Int(uint32_t num); // sends int but with a newline
+void UART_Print_Hex(uint32_t num); // sends hex but with a newline
+void UART_Flush_TX(void);
+bool UART_TX_Empty(void);
+bool UART_TX_Ready(void);
+bool UART_RX_Ready(void);

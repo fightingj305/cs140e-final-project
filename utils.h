@@ -3,9 +3,11 @@
 #include <stdint.h>
 #include "miniuart.h"
 
-#define CPU_HZ        700000000UL   // 700MHz
-#define CYCLES_PER_US (CPU_HZ / 1000000UL)  // 700
-#define CYCLES_PER_MS (CPU_HZ / 1000UL)     // 700000
+#define CORE_CLOCK_RATE 250000000
+#define ARM_CLOCK_RATE 700000000
+
+#define CYCLES_PER_US (ARM_CLOCK_RATE / 1000000UL)  // 700
+#define CYCLES_PER_MS (ARM_CLOCK_RATE / 1000UL)     // 700000
 
 #define ASSERT(x) \
     do { \
@@ -44,8 +46,8 @@ volatile uint32_t get32(volatile uint32_t *addr);
 void RMW_OR(uint32_t reg, uint32_t mask);
 void RMW_AND(uint32_t reg, uint32_t mask);
 
-void interrupts_on();
-void interrupts_off();
+void interrupts_on(void);
+void interrupts_off(void);
 
 
 static inline void ISB(void) {

@@ -57,15 +57,15 @@ typedef enum CM_Periph_t {
     PCMCLK
 } CM_Periph;
 
-typedef struct GPCLK_t {
+typedef struct GPCLK_t { // define GPCLK for every different clock
     uint32_t speed; // in Hz
     CM_Periph clk_periph;
     GPCLK_ClkSrc source;
     Pin output_pin;
 } GPCLK;
 
-CM_Reg GPCLK_Get_Ctl(GPCLK *clk);
-CM_Reg GPCLK_Get_Div(GPCLK *clk);
+CM_Reg GPCLK_Get_Ctl(GPCLK *clk); // get control register for given peripheral
+CM_Reg GPCLK_Get_Div(GPCLK *clk); // get divider register for given peripheral
 void GPCLK_Enable(GPCLK *clk);
 void GPCLK_Disable(GPCLK *clk);
 void GPCLK_Init(GPCLK *clk);

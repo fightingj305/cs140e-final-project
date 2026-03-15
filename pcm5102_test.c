@@ -5,8 +5,8 @@
 #include <stdint.h>
 
 #define SAMPLE_RATE 48000
-#define TONE_FREQ   440        // A4 tone
-#define AMPLITUDE   8000000    // adjust for volume (24-bit safe)
+#define TONE_FREQ   440        // A4
+#define AMPLITUDE   8000000    
 #define TABLE_SIZE  1024
 #define phase_step  ((TONE_FREQ * TABLE_SIZE) / SAMPLE_RATE)  // = 9 for 440Hz
 
@@ -162,12 +162,11 @@ int main() {
     UART_Send_String("I2S Enabled\n");
 
 
-    // Pre-fill FIFO before starting loop
     for (int i = 0; i < 16; i++) {
         PUT32(PCM_FIFO_A, 0);
     }
 
-    I2S_Clear_Flags();  // clear TXERR accumulated during init
+    I2S_Clear_Flags();
     I2S_Enable_Comms();
     uint32_t phase = 0;
 
@@ -176,11 +175,6 @@ int main() {
         int32_t sample = cos_table[phase];
 
         I2S_Send_Value(sample);   // left channel
-        // right channel automatically zero in your driver
-        // UART_Send_String("I2S Sent\n");
-        // UART_Send_Hex(read_val);
-        // UART_Send_Byte('\n');
-
         phase += phase_step;
         if (phase >= TABLE_SIZE)
             phase -= TABLE_SIZE;

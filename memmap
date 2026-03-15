@@ -1,12 +1,3 @@
-/*
- * this is a trivial "linker script" given to the linker
- * and is used to control how the program is linked together.  
- * 
- * the main important thing for us is that we want the program
- * to be linked starting at 0x8000.  the reason: by default the 
- * pi-install bootloader will copy the program it receives
- * to address 0x8000 and jump to it.
- */
 SECTIONS
 {
     /* link the code first at 0x8000. */

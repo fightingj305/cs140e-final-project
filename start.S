@@ -1,16 +1,3 @@
-@ this location is linked at 0x8000 using the trivial linker 
-@ script <memmap>
-@
-@ this address is defined in the rpi <config.txt> file as
-@ the start location (you can change it) that you 
-@ copied onto the SD card.
-@ 
-@ if you look at blink.list (which is a disassembled version of
-@ blink.bin) you can verify that this is true.
-@
-@ trivial trampoline to start the "C environment" --- in our case,
-@ just loading an address of physical memory into the stack pointer
-@ register and jumping to <main>.
 .globl _start
 _start:
     ldr pc, _reset_h
@@ -44,12 +31,11 @@ _reset_:
 
     mrs r0, cpsr
     bic r0, r0, #0x1F
-    orr r0, r0, #0x12       @ IRQ mode
+    orr r0, r0, #0x12       @ swap to irq mode
     msr cpsr_c, r0
-    mov sp, #0x6000000      @ IRQ stack — below supervisor stack
-
+    mov sp, #0x6000000      @ IRQ stack
     bic r0, r0, #0x1F
-    orr r0, r0, #0x13       @ supervisor mode
+    orr r0, r0, #0x13
     msr cpsr_c, r0
 
     bl main

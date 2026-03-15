@@ -26,6 +26,12 @@ const Pin fs = {19};
 const Pin din = {20};
 const Pin dout = {21};
 
+GPCLK pcm_clk = {
+    .clk_periph = PCMCLK,
+    .source = GPCLK_SRC_PLLD,
+    .speed = 2000000
+};
+
 I2S i2s = {
     .frame_size = 32,
     .rx_data_size = 24,
@@ -33,7 +39,8 @@ I2S i2s = {
     .bclk = bclk,
     .fs = fs,
     .din = din,
-    .dout = dout
+    .dout = dout,
+    .clk = &pcm_clk
 };
 
 const Pin mosi = {10};
@@ -44,7 +51,7 @@ const Pin cs1 = {7};
 const Pin dc = {12};
 
 SPI spi = {
-    .speed = 40000000, // 40 MHz
+    .speed = 60000000, // 60 MHz
     .cpol = CPOL_0,
     .cpha = CPHA_0,
     .msb_first = true,
@@ -59,7 +66,7 @@ SPI spi = {
 GPCLK pcm1808_sck = {
     .clk_periph = GPCLK0,
     .source = GPCLK_SRC_PLLD,
-    .speed = 3125000 * 8
+    .speed = 2000000 * 8
 };
 
 ADS1115 ads = {

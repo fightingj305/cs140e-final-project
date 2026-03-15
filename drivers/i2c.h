@@ -63,7 +63,6 @@ void I2C_Clear_FIFO(I2C *i2c);
 bool I2C_TX_FIFO_Full(I2C *i2c);
 bool I2C_TX_FIFO_Empty(I2C *i2c);
 bool I2C_RX_FIFO_Ready(I2C *i2c);
-bool I2C_FIFO_Full(I2C *i2c);
 bool I2C_Check_Error(I2C *i2c);
 void I2C_Send_Data(I2C *i2c, uint32_t num_bytes, uint8_t *data);
 void I2C_Receive_Data(I2C *i2c, uint32_t num_bytes, uint8_t *data);

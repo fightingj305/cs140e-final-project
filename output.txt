@@ -1,8 +1,0 @@
-DEBUG:done with options: dev name=</dev/ttyUSB0>, pi-prog=<main.bin>, trace=0
-opened tty port </dev/ttyUSB0>.
-DEBUG:my-install: tty-usb=</dev/ttyUSB0> program=<main.bin>: about to boot
-TRACE:simple_boot: sending 8712 bytes, crc32=7bde1e2f
-BOOT:waiting for a start
-DEBUG:PRINT_STRING:pi sent print: <Allen: success: Received the program!>
-BOOT:bootloader: Done.
-Program start
