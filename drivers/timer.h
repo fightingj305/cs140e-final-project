@@ -13,9 +13,6 @@
 #define IRQ_EN_BIT 5
 #define EN_BIT 7
 
-#define CORE_CLOCK_RATE 250000000
-#define ARM_CLOCK_RATE 700000000
-
 enum {
     TIM_LOAD = TIM_BASE + 0x400,
     TIM_VALUE = TIM_BASE + 0x404,
@@ -64,3 +61,4 @@ void TIM_Disable(void);
 void TIM_Enable_IRQ(void);
 void TIM_Disable_IRQ(void);
 void TIM_SYS_Delay_Millis(uint32_t ms); // this uses system clock to implement a blocking delay
+uint32_t TIM_SYS_Get_Ticks(void);

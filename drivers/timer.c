@@ -49,3 +49,6 @@ void TIM_SYS_Delay_Millis(uint32_t ms) {
 
     while ((GET32(TIM_SYS_CLO) - start) < wait);
 }
+uint32_t TIM_SYS_Get_Ticks(void) {
+    return GET32(TIM_SYS_CLO);
+}

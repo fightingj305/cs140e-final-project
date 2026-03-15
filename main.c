@@ -10,8 +10,8 @@
 
 #define CONTEXT_SWITCH_FREQ 100
 
-#define DOWNSAMPLE         2
-#define SAMPLE_BUFFER_SIZE 1024
+#define DOWNSAMPLE         4
+#define SAMPLE_BUFFER_SIZE 16384
 
 volatile int32_t sample_buffer[SAMPLE_BUFFER_SIZE];
 volatile uint32_t sample_write = 0;
