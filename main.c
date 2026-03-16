@@ -74,7 +74,6 @@ static inline int32_t sample_to_x(int32_t s) {
 
 void potentiometer_process() {
     while(1) {
-        UART_Send_String("Pot\n");
         uint16_t read_value0 = ADS1115_Read_Channel(&ads, ADS_AIN0);
         set_cutoff(read_value0); // lpf
 
@@ -101,7 +100,6 @@ void display_process() {
     uint16_t row[TFT_WIDTH];
     
     while (1) {
-        UART_Send_String("Disp\n");
         for (int i = 0; i < TFT_HEIGHT; i++) {
             uint32_t available = sample_write - sample_read;
             if (available >= DOWNSAMPLE) {
@@ -166,6 +164,7 @@ int main() {
     UART_Disable();
     UART_Config(&uart);
     UART_Enable();
+    UART_Send_String("Booted!\n");
     
     ADS1115_Init(&ads);
     GPIO_Config(&effect_control, INPUT);
@@ -194,6 +193,7 @@ int main() {
     TIM_Set_Frequency(CONTEXT_SWITCH_FREQ);
     TIM_Enable();
 
+    UART_Send_String("Peripherals initialized, starting scheduler!\n");
     scheduler_start(&sched);
 
     return 0;
