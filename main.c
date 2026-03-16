@@ -60,9 +60,6 @@ void c_interrupt_handler(void) {
         I2S_Send_Value(((uint32_t)signed_val) & 0x00FFFFFF);
         I2S_Clear_IRQ();
     }
-    else {
-        PANIC("Unknown interrupt!");
-    }
 }
 
 static inline int32_t sample_to_x(int32_t s) {
